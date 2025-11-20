@@ -55,4 +55,12 @@ cars.pop(3) #delete specific item in the list
 cities = ["eldoret","nairobi","mombasa","kisumu","nakuru"]
 towns = ["machakos","kitale","thika","garisa","iten"]
 combined = zip(cities,towns)
-print(list(combined))
+# print(list(combined))
+
+###Tuples - cannot  change and use parenthesis
+grades = ("A","B","C","D")
+#print(grades[2])
+
+###Looping
+
+
