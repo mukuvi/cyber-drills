@@ -62,5 +62,12 @@ grades = ("A","B","C","D")
 #print(grades[2])
 
 ###Looping
+fruits = ["mango","banana","apple","orange","pineapple"]
 
+for x in fruits:
+   # print(x)
+i= 1
+while i<10:
+    print(i)
+    i+=1
 
