@@ -44,3 +44,4 @@ def alcohol(age,money):
 cars = ["cardillac","mercedes benz", "toyota","mazda","nissan","tesla"]
 
 print(cars[1])
+print(cars[0:4])
