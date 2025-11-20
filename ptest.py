@@ -18,14 +18,23 @@ def logs():
    ##  print("I am using " +file+ " file in the "+system)
 logs()
 
-def add_num(num):
-    print(num *num)
-add_num(8)
-
 def soda(money):
     if money>5:
-        return "Proceed to but soda"
+        return "Proceed to buy soda"
     else:
-        return "You cant buy soda"
-print(soda(2))
-print(soda(6))
+        return "Go home"
+#print(soda(2))
+
+def alcohol(age,money):
+    if(age>=21) and (money>=5):
+        return "Proceed to get yourself a tipsy"
+    elif(age>=21) and (money<5):
+        return "Come with more money"
+    elif(age<21) and (money>=5):
+        return "You cant have alcohol, too young"
+    else:
+        return "go home"
+print(alcohol(22,7))
+print(alcohol(21,4))
+print(alcohol(18,10))
+print(alcohol(17,2))
