@@ -45,3 +45,6 @@ cars = ["cardillac","mercedes benz", "toyota","mazda","nissan","tesla"]
 
 print(cars[1])
 print(cars[0:4])
+print(cars[:1])
+print(cars[1:])
+print(len(cars))
