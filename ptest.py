@@ -12,6 +12,8 @@ name = "james"
 
 # print(name + " is " + str(age) + " old")
 
+### functions
+
 def logs():
     file = "root"
     system = "Parrot OS"
@@ -34,7 +36,11 @@ def alcohol(age,money):
         return "You cant have alcohol, too young"
     else:
         return "go home"
-print(alcohol(22,7))
-print(alcohol(21,4))
-print(alcohol(18,10))
-print(alcohol(17,2))
+#print(alcohol(22,7))
+#print(alcohol(21,4))
+
+###lists
+
+cars = ["cardillac","mercedes benz", "toyota","mazda","nissan","tesla"]
+
+print(cars[1])
