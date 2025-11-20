@@ -10,3 +10,11 @@ else:
     print("Invalid amount of arguments.")
     print("Syntax: python3 scanner.py <ip>")
     sys.exit()
+    
+#Add a pretty banner
+print("-" * 50)
+print("Scanning target "+target)
+print("Time started: "+str(datetime.now()))
+print("-" * 50)
+
+
