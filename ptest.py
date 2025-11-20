@@ -21,3 +21,11 @@ logs()
 def add_num(num):
     print(num *num)
 add_num(8)
+
+def soda(money):
+    if money>5:
+        return "Proceed to but soda"
+    else:
+        return "You cant buy soda"
+print(soda(2))
+print(soda(6))
