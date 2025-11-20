@@ -43,8 +43,16 @@ def alcohol(age,money):
 
 cars = ["cardillac","mercedes benz", "toyota","mazda","nissan","tesla"]
 
-print(cars[1])
-print(cars[0:4])
-print(cars[:1])
-print(cars[1:])
-print(len(cars))
+#print(cars[1])
+#print(cars[0:4])
+#print(cars[:1])
+#print(cars[1:])
+#print(len(cars))
+cars.append("bmw") #add item to list
+cars.pop() #delete last item from the list
+cars.pop(3) #delete specific item in the list
+
+cities = ["eldoret","nairobi","mombasa","kisumu","nakuru"]
+towns = ["machakos","kitale","thika","garisa","iten"]
+combined = zip(cities,towns)
+print(list(combined))
