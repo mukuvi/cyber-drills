@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Parsing Confusion Demo</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-style: italic;
+      }
+      form {
+        margin-bottom: 30px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+      }
+      input[type="url"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+      }
+      input[type="url"]:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #f5c6cb;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #c3e6cb;
+      }
+      .response {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 15px;
+        white-space: pre-wrap;
+        font-family: "Courier New", monospace;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .info {
+        background-color: #e3f2fd;
+        color: #1565c0;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #bbdefb;
+      }
+      .warning {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #ffeaa7;
+      }
+      .example {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🌐 URL Parsing Confusion Demo</h1>
+      <p class="subtitle">
+        A demonstration of URL parsing inconsistencies and security implications
+      </p>
+
+      <div class="warning">
+        <strong>⚠️ Educational Purpose Only:</strong> This application
+        demonstrates URL parsing confusion vulnerabilities. It uses two
+        different parser objects (Validator and Requester) with different
+        parsing logic.
+      </div>
+
+      <div class="info">
+        <strong>🎯 Challenge:</strong> This app fetches content from URLs but
+        blocks access to internal/private IP addresses. Can you bypass the
+        security restrictions?
+      </div>
+
+      <form method="post">
+        <label for="url">Enter URL to fetch:</label>
+        <input
+          type="url"
+          id="url"
+          name="url"
+          value="{{ url }}"
+          placeholder="https://example.com"
+          required
+        />
+        <br />
+        <button type="submit">🚀 Fetch URL</button>
+      </form>
+
+      {% if error_message %}
+      <div class="error"><strong>❌ Error:</strong> {{ error_message }}</div>
+      {% endif %} {% if debug_info and debug_info.validator_result and
+      debug_info.requester_result %}
+      <div class="info">
+        <h3>🔍 Parser Output Comparison:</h3>
+        <p>
+          <strong>Original URL:</strong>
+          <code>{{ debug_info.original_url }}</code>
+        </p>
+        <div style="display: flex; gap: 20px">
+          <div style="flex: 1">
+            <h4>🛡️ Validator.parse() Output:</h4>
+            <div class="response" style="font-size: 0.9em">
+{% if debug_info.validator_result %}Hostname: {{
+              debug_info.validator_result.hostname }}Scheme: {{
+              debug_info.validator_result.scheme }} Port: {{
+              debug_info.validator_result.port }} Path: {{
+              debug_info.validator_result.path }} Parser: {{
+              debug_info.validator_result.parser }}{% else %}PARSING FAILED -
+              URL REJECTED{% endif %}
+            </div>
+          </div>
+          <div style="flex: 1">
+            <h4>🌐 Requester.parse() Output:</h4>
+            <div class="response" style="font-size: 0.9em">
+{% if debug_info.requester_result %}Hostname: {{
+              debug_info.requester_result.hostname }} Scheme: {{
+              debug_info.requester_result.scheme }} Port: {{
+              debug_info.requester_result.port }} Path: {{
+              debug_info.requester_result.path }} Parser: {{
+              debug_info.requester_result.parser }}{% else %}PARSING FAILED{%
+              endif %}
+            </div>
+          </div>
+        </div>
+        {% if debug_info.validator_result and debug_info.requester_result %} {%
+        set differences = [] %} {% if debug_info.validator_result.hostname !=
+        debug_info.requester_result.hostname %} {% set _ =
+        differences.append(('Hostname', debug_info.validator_result.hostname,
+        debug_info.requester_result.hostname)) %} {% endif %} {% if
+        debug_info.validator_result.scheme != debug_info.requester_result.scheme
+        %} {% set _ = differences.append(('Scheme',
+        debug_info.validator_result.scheme, debug_info.requester_result.scheme))
+        %} {% endif %} {% if debug_info.validator_result.port !=
+        debug_info.requester_result.port %} {% set _ =
+        differences.append(('Port', debug_info.validator_result.port,
+        debug_info.requester_result.port)) %} {% endif %} {% if
+        debug_info.validator_result.path != debug_info.requester_result.path %}
+        {% set _ = differences.append(('Path', debug_info.validator_result.path,
+        debug_info.requester_result.path)) %} {% endif %} {% if differences %}
+        <div class="warning">
+          <strong>⚠️ PARSING DIFFERENCES DETECTED!</strong><br />
+          {% for diff_type, validator_val, requester_val in differences %}
+          <strong>{{ diff_type }}:</strong>
+          Validator=<code>{{ validator_val }}</code> vs Requester=<code
+            >{{ requester_val }}</code
+          ><br />
+          {% endfor %}
+          <em>This demonstrates URL parsing confusion vulnerability!</em>
+        </div>
+        {% endif %} {% endif %}
+      </div>
+      {% endif %} {% if content and not error_message %}
+      <div class="success">
+        <strong>✅ Response received successfully!</strong>
+      </div>
+      <h3>📄 Response Content:</h3>
+      <div class="response">{{ content }}</div>
+      {% endif %}
+
+      <div class="info">
+        <h3>🎯 Protected Resources:</h3>
+        <ul>
+          <li>
+            <strong>/flag</strong> - Contains the secret flag (only accessible
+            from localhost)
+          </li>
+          <li><strong>/health</strong> - Application health check</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
