@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    title LOLJS Sandbox
+    link(rel="stylesheet" href="/static/styles.css")
+  body
+    .dynamic-background
+    .container
+      h1 LOLJS Sandbox
+      form(action="/render" method="post")
+        textarea(name="template" rows="10" cols="50" placeholder="Enter your PUG template here")
+        br
+        button(type="submit") Submit Template
+      if error
+        .error-message= error
+      if result
+        .output
+          h2 Rendered Output:
+          pre= result
+    script(src="/static/dynamic-background.js")
