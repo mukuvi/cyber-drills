@@ -1,21 +1,93 @@
-rule FileTypeDetection
+rule Comprehensive_Malware_Detection
 {
+    meta:
+        description = "Comprehensive YARA rule for detecting common malicious activity patterns"
+        author = "Security Analyst"
+        date = "2025-12-16"
+        severity = "high"
+        reference = "General malware detection patterns"
+
     strings:
-        $magic_bytes = { 4D 5A 90 00 03 00 00 00 }  // MZ header for PE files
-        $magic_bytes2 = { 7F 45 4C 46 }           // ELF header
-        $magic_bytes3 = { 50 4B 03 04 }           // ZIP file header
-        $magic_bytes4 = { 25 50 44 46 }           // PDF header
+        // Suspicious API calls - Process manipulation
+        $api1 = "CreateRemoteThread" ascii wide
+        $api2 = "VirtualAllocEx" ascii wide
+        $api3 = "WriteProcessMemory" ascii wide
+        $api4 = "OpenProcess" ascii wide
+        $api5 = "NtUnmapViewOfSection" ascii wide
+        
+        // Anti-analysis techniques
+        $anti1 = "IsDebuggerPresent" ascii wide
+        $anti2 = "CheckRemoteDebuggerPresent" ascii wide
+        $anti3 = "NtQueryInformationProcess" ascii wide
+        $anti4 = "OutputDebugString" ascii wide
+        $anti5 = "GetTickCount" ascii wide
+        
+        // Persistence mechanisms
+        $persist1 = "Software\\Microsoft\\Windows\\CurrentVersion\\Run" ascii wide
+        $persist2 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" ascii wide
+        $persist3 = "schtasks" ascii wide nocase
+        $persist4 = "at.exe" ascii wide nocase
+        
+        // Network activity - C2 communication
+        $net1 = "InternetOpenA" ascii wide
+        $net2 = "InternetOpenUrlA" ascii wide
+        $net3 = "HttpSendRequestA" ascii wide
+        $net4 = "URLDownloadToFile" ascii wide
+        $net5 = "WinHttpOpen" ascii wide
+        
+        // Credential theft
+        $cred1 = "LsaEnumerateLogonSessions" ascii wide
+        $cred2 = "SamIConnect" ascii wide
+        $cred3 = "CredEnumerate" ascii wide
+        $cred4 = "mimikatz" ascii wide nocase
+        
+        // Encryption/Ransomware indicators
+        $crypto1 = "CryptEncrypt" ascii wide
+        $crypto2 = "CryptAcquireContext" ascii wide
+        $crypto3 = ".encrypted" ascii wide
+        $crypto4 = "YOUR FILES HAVE BEEN ENCRYPTED" ascii wide nocase
+        $crypto5 = "bitcoin" ascii wide nocase
+        
+        // Keylogging
+        $keylog1 = "GetAsyncKeyState" ascii wide
+        $keylog2 = "SetWindowsHookEx" ascii wide
+        $keylog3 = "WH_KEYBOARD_LL" ascii wide
+        
+        // Suspicious strings
+        $susp1 = "cmd.exe /c" ascii wide nocase
+        $susp2 = "powershell -enc" ascii wide nocase
+        $susp3 = "powershell -nop -w hidden" ascii wide nocase
+        $susp4 = "regsvr32" ascii wide nocase
+        $susp5 = "rundll32" ascii wide nocase
+        
+        // Common malware patterns
+        $pattern1 = { 4D 5A 90 00 03 00 00 00 } // PE header
+        $pattern2 = /\b([0-9]{1,3}\.){3}[0-9]{1,3}\b/ // IP address pattern
+        $pattern3 = /(https?|ftp):\/\/[^\s\/$.?#].[^\s]*/ // URL pattern
+        
+        // Shellcode patterns
+        $shellcode1 = { 55 8B EC 83 EC ?? 53 56 57 } // Function prologue
+        $shellcode2 = { 6A 00 68 ?? ?? ?? ?? E8 } // Common shellcode pattern
+        $shellcode3 = { FC E8 ?? ?? ?? ?? 60 } // GetPC shellcode
 
     condition:
-        // Check for PE files (Windows executables)
-        $magic_bytes and filesize < 10MB
-        
-        // Check for ELF files (Linux executables)
-        or $magic_bytes2 and filesize < 5MB
-        
-        // Check for ZIP files
-        or $magic_bytes3 and filesize < 20MB
-        
-        // Check for PDF files
-        or $magic_bytes4 and filesize < 15MB
+        uint16(0) == 0x5A4D and // PE file check
+        (
+            // High confidence - multiple categories
+            (3 of ($api*) and 2 of ($net*)) or
+            (3 of ($api*) and 2 of ($anti*)) or
+            (2 of ($cred*)) or
+            (3 of ($crypto*)) or
+            
+            // Medium confidence - suspicious combinations
+            (2 of ($api*) and 2 of ($persist*)) or
+            (2 of ($keylog*) and 1 of ($net*)) or
+            (3 of ($susp*) and 1 of ($net*)) or
+            
+            // Shellcode detection
+            (2 of ($shellcode*) and 1 of ($api*)) or
+            
+            // Ransomware indicators
+            ($crypto4 and ($crypto5 or 2 of ($crypto*)))
+        )
 }
